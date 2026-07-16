@@ -1,0 +1,566 @@
+:root {
+	--bg: #0e0e10;
+	--panel: #17171b;
+	--line: #3a3a42;
+	--text: #ececf0;
+	--muted: #8a8a95;
+	--accent: #c0392b;
+	--danger: #7a2b23;
+	font-family: system-ui, "Segoe UI", sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--text);
+}
+
+.center {
+	text-align: center;
+	padding: 3rem;
+}
+.muted {
+	color: var(--muted);
+}
+.error {
+	color: #e57373;
+	margin: 0.5rem 0;
+}
+.title {
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	margin: 0;
+}
+
+/* --- Auth --- */
+.auth-page {
+	min-height: 100vh;
+	display: grid;
+	place-items: center;
+	padding: 1rem;
+}
+.auth-card {
+	width: 100%;
+	max-width: 340px;
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: 12px;
+	padding: 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+.subtitle {
+	color: var(--muted);
+	margin: 0 0 0.5rem;
+}
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	font-size: 0.85rem;
+}
+.field span {
+	color: var(--muted);
+}
+
+input {
+	background: #101014;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	color: var(--text);
+	padding: 0.55rem 0.7rem;
+	font-size: 0.95rem;
+}
+input:focus {
+	outline: 1px solid var(--accent);
+}
+
+button {
+	cursor: pointer;
+	font-size: 0.9rem;
+}
+.btn-primary {
+	background: var(--accent);
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 0.6rem 0.9rem;
+}
+.btn-primary:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+.btn-link {
+	background: none;
+	border: none;
+	color: var(--muted);
+	text-decoration: underline;
+	padding: 0.3rem;
+}
+.btn-danger {
+	background: none;
+	border: 1px solid var(--danger);
+	color: #e57373;
+	border-radius: 6px;
+	padding: 0.35rem 0.6rem;
+}
+
+/* --- Liste --- */
+.list-page {
+	max-width: 960px;
+	margin: 0 auto;
+	padding: 1.5rem;
+}
+.topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid var(--line);
+	padding-bottom: 1rem;
+	margin-bottom: 1.5rem;
+}
+.topbar-right {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+.create-row {
+	display: flex;
+	gap: 0.75rem;
+	margin-bottom: 1.5rem;
+}
+.create-row input {
+	flex: 1;
+}
+
+.card-grid {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 1rem;
+}
+.char-card {
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: 10px;
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+.char-card-link {
+	text-decoration: none;
+	color: inherit;
+}
+.char-card h2 {
+	margin: 0 0 0.3rem;
+	font-size: 1.1rem;
+}
+.stats {
+	color: var(--muted);
+	font-size: 0.85rem;
+	margin: 0;
+}
+
+.badge {
+	display: inline-block;
+	font-size: 0.7rem;
+	letter-spacing: 0.05em;
+	padding: 0.15rem 0.5rem;
+	border-radius: 999px;
+	border: 1px solid var(--line);
+}
+.badge-alive {
+	color: #7ecb8f;
+	border-color: #2e5c39;
+}
+.badge-defeated {
+	color: #e0b64e;
+	border-color: #6b5420;
+}
+.badge-dead {
+	color: #e57373;
+	border-color: var(--danger);
+}
+
+/* --- Fiche (stub) --- */
+.sheet-page {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 1.5rem;
+}
+.debug {
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	padding: 1rem;
+	overflow: auto;
+	font-size: 0.8rem;
+}
+
+/* --- Création --- */
+.create-page {
+	max-width: 560px;
+	margin: 0 auto;
+	padding: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+.hint {
+	margin: 0;
+	font-size: 0.85rem;
+}
+
+.discipline-picker {
+	list-style: none;
+	padding: 0;
+	margin: 0.3rem 0 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+.discipline-chip {
+	background: #101014;
+	border: 1px solid var(--line);
+	color: var(--text);
+	border-radius: 999px;
+	padding: 0.4rem 0.85rem;
+	font-size: 0.85rem;
+	transition:
+		border-color 0.15s,
+		background 0.15s;
+}
+.discipline-chip:hover:not(:disabled) {
+	border-color: var(--accent);
+}
+.discipline-chip.selected {
+	background: var(--accent);
+	border-color: var(--accent);
+	color: #fff;
+}
+.discipline-chip:disabled {
+	opacity: 0.35;
+	cursor: not-allowed;
+}
+
+/* ============ Feuille d'aventure ============ */
+.sheet {
+	max-width: 640px;
+	margin: 0 auto;
+	padding: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+.sheet-topbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.sheet-header {
+	text-align: center;
+}
+.sheet-kicker {
+	margin: 0;
+	text-transform: uppercase;
+	letter-spacing: 0.25em;
+	font-size: 0.7rem;
+	color: var(--muted);
+}
+.sheet-name {
+	margin: 0.2rem 0 0;
+	font-size: 1.8rem;
+	letter-spacing: 0.05em;
+}
+
+/* Caractéristiques */
+.stat-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 0.75rem;
+}
+.stat-box {
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: 10px;
+	padding: 0.75rem;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	gap: 0.3rem;
+}
+.stat-label {
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--muted);
+}
+.stat-value {
+	font-size: 1.5rem;
+	font-weight: 600;
+}
+.stat-value small {
+	font-size: 0.8rem;
+	color: var(--muted);
+	font-weight: 400;
+}
+.endurance-bar {
+	height: 5px;
+	background: #101014;
+	border-radius: 999px;
+	overflow: hidden;
+}
+.endurance-fill {
+	height: 100%;
+	background: linear-gradient(90deg, #7a2b23, #c0392b);
+	transition: width 0.3s;
+}
+
+/* Sections */
+.sheet-section {
+	background: var(--panel);
+	border: 1px solid var(--line);
+	border-radius: 12px;
+	padding: 1rem 1.1rem;
+}
+.section-title {
+	margin: 0 0 0.75rem;
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: var(--text);
+	border-bottom: 1px solid var(--line);
+	padding-bottom: 0.5rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+}
+.section-title .count {
+	color: var(--muted);
+	font-size: 0.75rem;
+	letter-spacing: 0;
+}
+
+.discipline-list,
+.special-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}
+.discipline-item {
+	background: #101014;
+	border: 1px solid var(--line);
+	border-radius: 999px;
+	padding: 0.35rem 0.8rem;
+	font-size: 0.85rem;
+}
+.special-list {
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+/* Emplacements (armes / sac) */
+.slots {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+.slot {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	padding: 0.45rem 0.7rem;
+	font-size: 0.9rem;
+	min-height: 2rem;
+}
+.slot-empty {
+	color: var(--muted);
+	opacity: 0.5;
+}
+.slot-qty {
+	color: var(--muted);
+	font-size: 0.8rem;
+}
+
+/* Panneau de fight */
+.fight-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+.fight-state {
+	margin: 0;
+	font-weight: 600;
+}
+.fight-panel.defeated .fight-state {
+	color: #e0b64e;
+}
+.fight-panel.dead .fight-state {
+	color: #e57373;
+}
+.fight-row {
+	display: flex;
+	gap: 1.25rem;
+	align-items: flex-end;
+	flex-wrap: wrap;
+}
+.field.inline {
+	flex-direction: column;
+}
+.field.inline input {
+	width: 90px;
+}
+.checkbox {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+.checkbox input {
+	width: auto;
+}
+.fight-actions {
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.inv-list {
+	list-style: none;
+	padding: 0;
+	margin: 0 0 0.75rem;
+}
+.inv-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.4rem 0.6rem;
+	border: 1px solid #2a2a2a;
+	border-radius: 6px;
+	margin-bottom: 0.35rem;
+}
+.inv-name {
+	flex: 1;
+}
+.inv-actions {
+	display: flex;
+	gap: 0.35rem;
+}
+.inv-actions button {
+	font-size: 0.8rem;
+	padding: 0.25rem 0.5rem;
+	cursor: pointer;
+}
+.inv-actions button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+.inv-actions .danger {
+	color: #e06c75;
+}
+
+.bonus {
+	font-size: 0.75rem;
+	color: #98c379;
+	font-weight: 600;
+}
+.badge-equipped {
+	background: #3a5;
+	color: #fff;
+	font-size: 0.7rem;
+	padding: 0.1rem 0.4rem;
+	border-radius: 4px;
+}
+
+.add-picker {
+	display: flex;
+	gap: 0.5rem;
+}
+.add-picker select {
+	flex: 1;
+	padding: 0.3rem;
+}
+
+.btn-add {
+	margin-left: 0.5rem;
+	width: 1.6rem;
+	height: 1.6rem;
+	border-radius: 50%;
+	border: 1px solid #555;
+	background: transparent;
+	color: inherit;
+	font-size: 1rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.notice {
+	color: #98c379;
+	padding: 0.4rem 0;
+}
+
+.modal-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 50;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.modal-backdrop {
+	position: fixed;
+	inset: 0;
+	border: none;
+	padding: 0;
+	background: rgba(0, 0, 0, 0.6);
+	cursor: pointer;
+}
+.modal {
+	position: relative;
+	z-index: 1; /* passe au-dessus du backdrop */
+	background: #1a1a1a;
+	border: 1px solid #333;
+	border-radius: 8px;
+	padding: 1.25rem;
+	width: min(90vw, 340px);
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+.modal-field {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	font-size: 0.85rem;
+}
+.modal-field input {
+	padding: 0.4rem;
+}
+.modal-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.5rem;
+}
+
+@media (max-width: 520px) {
+	.stat-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
