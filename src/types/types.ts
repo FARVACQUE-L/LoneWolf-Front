@@ -49,3 +49,28 @@ export interface AuthUser {
 	id: number;
 	email: string;
 }
+
+export type FightOutcome = "IN_PROGRESS" | "WON" | "LOST";
+
+export interface RoundLog {
+	number: number;
+	combatRatio: number;
+	draw: number;
+	enemyLoss: number;
+	playerLoss: number;
+}
+
+export interface StartFightResponse {
+	fightId: number;
+	status: "IN_PROGRESS";
+	enemy: { name: string; combatSkill: number; endurance: number };
+	character: { endurance: number; status: string };
+	snapshotSaved: boolean;
+}
+
+export interface RoundResponse {
+	round: RoundLog;
+	enemy: { name: string; endurance: number };
+	character: { endurance: number; status: string; choiceRequired: boolean };
+	fightStatus: FightOutcome;
+}
