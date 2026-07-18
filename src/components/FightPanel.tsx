@@ -21,6 +21,8 @@ export default function FightPanel({ character, onUpdated }: Props) {
 	const [rounds, setRounds] = useState<RoundLog[]>([]);
 	const [outcome, setOutcome] = useState<FightOutcome | null>(null);
 	const [disciplineBonus, setDisciplineBonus] = useState(0);
+	const [enemyPsychicAttack, setEnemyPsychicAttack] = useState(false);
+	const [mindblastEnabled, setMindblastEnabled] = useState(true);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -30,6 +32,7 @@ export default function FightPanel({ character, onUpdated }: Props) {
 		setRounds([]);
 		setOutcome(null);
 		setDisciplineBonus(0);
+		setMindblastEnabled(true);
 	}
 
 	async function run(action: () => Promise<unknown>, afterReset = false) {
@@ -54,6 +57,7 @@ export default function FightPanel({ character, onUpdated }: Props) {
 				enemyName: enemyName.trim() || undefined,
 				enemyCombatSkill: enemySkill,
 				enemyEndurance,
+				enemyPsychicAttack,
 			});
 			setFightId(res.fightId);
 			setEnemy({ name: res.enemy.name, endurance: res.enemy.endurance });
@@ -72,10 +76,10 @@ export default function FightPanel({ character, onUpdated }: Props) {
 		setBusy(true);
 		setError(null);
 		try {
-			const res = await fightsApi.nextRound(
-				fightId,
-				disciplineBonus || undefined,
-			);
+			const res = await fightsApi.nextRound(fightId, {
+				disciplineBonus: disciplineBonus || undefined,
+				mindblastEnabled,
+			});
 			setEnemy({ name: res.enemy.name, endurance: res.enemy.endurance });
 			setRounds((prev) => [...prev, res.round]);
 			setOutcome(res.fightStatus);
@@ -196,6 +200,17 @@ export default function FightPanel({ character, onUpdated }: Props) {
 						value={disciplineBonus}
 						onChange={(e) => setDisciplineBonus(Number(e.target.value) || 0)}
 					/>
+					<div className="fight-check">
+						<input
+							id="mindblast-enabled"
+							type="checkbox"
+							checked={mindblastEnabled}
+							onChange={(e) => setMindblastEnabled(e.target.checked)}
+						/>
+						<label htmlFor="mindblast-enabled">
+							Puissance psychique active
+						</label>
+					</div>
 				</div>
 
 				{error && <p className="error">{error}</p>}
@@ -243,6 +258,17 @@ export default function FightPanel({ character, onUpdated }: Props) {
 						value={enemyEndurance}
 						onChange={(e) => setEnemyEndurance(Number(e.target.value) || 0)}
 					/>
+				</div>
+				<div className="field field-check">
+					<input
+						id="enemy-psychic"
+						type="checkbox"
+						checked={enemyPsychicAttack}
+						onChange={(e) => setEnemyPsychicAttack(e.target.checked)}
+					/>
+					<label htmlFor="enemy-psychic">
+						Cet ennemi attaque mentalement (chaque round)
+					</label>
 				</div>
 			</div>
 

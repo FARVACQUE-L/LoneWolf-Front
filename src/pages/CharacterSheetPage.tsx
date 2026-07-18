@@ -151,6 +151,7 @@ export default function CharacterSheetPage() {
 	const [modalOpen, setModalOpen] = useState(false);
 	const [goldAmount, setGoldAmount] = useState(1);
 	const [randomDraw, setRandomDraw] = useState<number | null>(null);
+	const [psychicAmount, setPsychicAmount] = useState(2);
 
 	const load = useCallback(async () => {
 		if (!id) return;
@@ -247,6 +248,34 @@ export default function CharacterSheetPage() {
 			} else {
 				setError(err instanceof ApiError ? err.message : "Action impossible.");
 			}
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function handlePsychic() {
+		setBusy(true);
+		setError(null);
+		setNotice(null);
+		try {
+			const { character: updated, effect } = await charactersApi.psychicAttack(
+				characterId,
+				psychicAmount,
+			);
+			setCharacter(updated);
+			if (effect.blocked) {
+				setNotice("Attaque psychique bloquée par le Bouclier Psychique.");
+			} else if (updated.status === "DEAD") {
+				setNotice(
+					"Attaque psychique : Endurance à 0, le Seigneur Kaï succombe.",
+				);
+			} else {
+				setNotice(
+					`Attaque psychique : −${Math.abs(effect.enduranceDelta)} Endurance.`,
+				);
+			}
+		} catch (err) {
+			setError(err instanceof ApiError ? err.message : "Action impossible.");
 		} finally {
 			setBusy(false);
 		}
@@ -620,6 +649,29 @@ export default function CharacterSheetPage() {
 						}
 					>
 						Repas manqué −3
+					</button>
+				</div>
+				<div className="psychic-attack">
+					<input
+						type="number"
+						min={1}
+						max={99}
+						value={psychicAmount}
+						disabled={busy || !alive}
+						onChange={(e) =>
+							setPsychicAmount(
+								Math.max(1, Math.min(99, Number(e.target.value) || 1)),
+							)
+						}
+						aria-label="Points perdus (attaque psychique)"
+					/>
+					<button
+						type="button"
+						className="btn danger"
+						disabled={busy || !alive}
+						onClick={handlePsychic}
+					>
+						Attaque psychique
 					</button>
 				</div>
 			</section>

@@ -8,13 +8,20 @@ export const fightsApi = {
 			enemyName?: string;
 			enemyCombatSkill: number;
 			enemyEndurance: number;
+			enemyPsychicAttack?: boolean;
 		},
 	) =>
 		http.post<StartFightResponse>(`/characters/${characterId}/fights`, enemy),
 
-	nextRound: (fightId: number, disciplineBonus?: number) =>
-		http.post<RoundResponse>(
-			`/fights/${fightId}/rounds`,
-			disciplineBonus ? { disciplineBonus } : {},
-		),
+	nextRound: (
+		fightId: number,
+		options: { disciplineBonus?: number; mindblastEnabled?: boolean } = {},
+	) => {
+		const body: Record<string, unknown> = {};
+		if (options.disciplineBonus) body.disciplineBonus = options.disciplineBonus;
+		if (options.mindblastEnabled !== undefined) {
+			body.mindblastEnabled = options.mindblastEnabled;
+		}
+		return http.post<RoundResponse>(`/fights/${fightId}/rounds`, body);
+	},
 };

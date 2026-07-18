@@ -113,4 +113,10 @@ export const charactersApi = {
 		http
 			.post<CharacterResponse>(`/characters/${id}/gold`, { delta })
 			.then((r) => r.character),
+
+	psychicAttack: (id: number, amount: number) =>
+		http.post<{
+			character: Character;
+			effect: { name: string; enduranceDelta: number; blocked: boolean };
+		}>(`/characters/${id}/psychic`, { amount }),
 };

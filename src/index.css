@@ -628,12 +628,26 @@ button {
 	gap: 0.75rem;
 	align-items: center;
 }
-
 .random-result {
 	font-size: 1.75rem;
 	font-weight: 700;
 	min-width: 1.5em;
 	text-align: center;
+}
+.psychic-attack {
+	display: flex;
+	gap: 0.35rem;
+	align-items: center;
+	margin-top: 0.4rem;
+}
+.psychic-attack input {
+	width: 3.5rem;
+}
+.field-check,
+.fight-check {
+	display: flex;
+	gap: 0.4rem;
+	align-items: center;
 }
 
 @media (max-width: 520px) {
