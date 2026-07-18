@@ -1,4 +1,3 @@
-// src/components/FightPanel.tsx
 import { useState } from "react";
 import { charactersApi } from "../api/characters";
 import { fightsApi } from "../api/fights";
@@ -7,16 +6,13 @@ import type { Character, FightOutcome, RoundLog } from "../types/types";
 
 interface Props {
 	character: Character;
-	onUpdated: () => void; // la page re-fetch le perso après chaque action
+	onUpdated: () => void;
 }
 
 export default function FightPanel({ character, onUpdated }: Props) {
-	// Formulaire adversaire
 	const [enemyName, setEnemyName] = useState("");
 	const [enemySkill, setEnemySkill] = useState(15);
 	const [enemyEndurance, setEnemyEndurance] = useState(25);
-
-	// État du combat en cours (local : le back ne renvoie pas le fight dans la fiche)
 	const [fightId, setFightId] = useState<number | null>(null);
 	const [enemy, setEnemy] = useState<{
 		name: string;
@@ -25,7 +21,6 @@ export default function FightPanel({ character, onUpdated }: Props) {
 	const [rounds, setRounds] = useState<RoundLog[]>([]);
 	const [outcome, setOutcome] = useState<FightOutcome | null>(null);
 	const [disciplineBonus, setDisciplineBonus] = useState(0);
-
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -64,7 +59,7 @@ export default function FightPanel({ character, onUpdated }: Props) {
 			setEnemy({ name: res.enemy.name, endurance: res.enemy.endurance });
 			setRounds([]);
 			setOutcome("IN_PROGRESS");
-			onUpdated(); // le snapshot a été pris : re-fetch pour cohérence
+			onUpdated();
 		} catch (err) {
 			setError(err instanceof ApiError ? err.message : "Combat impossible.");
 		} finally {
@@ -84,7 +79,7 @@ export default function FightPanel({ character, onUpdated }: Props) {
 			setEnemy({ name: res.enemy.name, endurance: res.enemy.endurance });
 			setRounds((prev) => [...prev, res.round]);
 			setOutcome(res.fightStatus);
-			onUpdated(); // met à jour l'Endurance / le statut du perso dans la feuille
+			onUpdated();
 		} catch (err) {
 			setError(err instanceof ApiError ? err.message : "Round impossible.");
 		} finally {
@@ -120,7 +115,6 @@ export default function FightPanel({ character, onUpdated }: Props) {
 			</table>
 		) : null;
 
-	// ─── Personnage mort : lecture seule ───────────────────────────────────────
 	if (character.status === "DEAD") {
 		return (
 			<section className="fight-panel">
@@ -132,7 +126,6 @@ export default function FightPanel({ character, onUpdated }: Props) {
 		);
 	}
 
-	// ─── Vaincu : choix reprise / abandon ──────────────────────────────────────
 	if (character.status === "DEFEATED") {
 		return (
 			<section className="fight-panel">
@@ -164,7 +157,6 @@ export default function FightPanel({ character, onUpdated }: Props) {
 		);
 	}
 
-	// ─── Victoire ──────────────────────────────────────────────────────────────
 	if (outcome === "WON") {
 		return (
 			<section className="fight-panel">
@@ -181,7 +173,6 @@ export default function FightPanel({ character, onUpdated }: Props) {
 		);
 	}
 
-	// ─── Combat en cours ───────────────────────────────────────────────────────
 	if (outcome === "IN_PROGRESS" && fightId !== null && enemy) {
 		return (
 			<section className="fight-panel">
@@ -217,7 +208,6 @@ export default function FightPanel({ character, onUpdated }: Props) {
 		);
 	}
 
-	// ─── Aucun combat : formulaire adversaire ──────────────────────────────────
 	return (
 		<section className="fight-panel">
 			<h3>Nouveau combat</h3>

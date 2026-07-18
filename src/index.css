@@ -369,8 +369,6 @@ button {
 	flex-direction: column;
 	gap: 0.35rem;
 }
-
-/* Emplacements (armes / sac) */
 .slots {
 	list-style: none;
 	padding: 0;
@@ -397,8 +395,6 @@ button {
 	color: var(--muted);
 	font-size: 0.8rem;
 }
-
-/* Panneau de fight */
 .fight-panel {
 	display: flex;
 	flex-direction: column;
@@ -530,7 +526,7 @@ button {
 }
 .modal {
 	position: relative;
-	z-index: 1; /* passe au-dessus du backdrop */
+	z-index: 1;
 	background: #1a1a1a;
 	border: 1px solid #333;
 	border-radius: 8px;
@@ -612,6 +608,32 @@ button {
 }
 .error {
 	color: #e06c6c;
+}
+.endurance-actions {
+	display: flex;
+	gap: 0.5rem;
+}
+.gold-controls {
+	display: flex;
+	gap: 0.35rem;
+	align-items: center;
+	margin-top: 0.4rem;
+}
+
+.gold-controls input {
+	width: 3.5rem;
+}
+.random-controls {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+}
+
+.random-result {
+	font-size: 1.75rem;
+	font-weight: 700;
+	min-width: 1.5em;
+	text-align: center;
 }
 
 @media (max-width: 520px) {

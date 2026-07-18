@@ -54,6 +54,16 @@ export const charactersApi = {
 			.post<CharacterResponse>(`/characters/${id}/abandon`)
 			.then((r) => r.character),
 
+	heal: (id: number) =>
+		http
+			.post<CharacterResponse>(`/characters/${id}/heal`)
+			.then((r) => r.character),
+
+	meal: (id: number) =>
+		http
+			.post<CharacterResponse>(`/characters/${id}/meal`)
+			.then((r) => r.character),
+
 	addObject: (id: number, objectId: number, quantity = 1) =>
 		http
 			.post<CharacterResponse>(`/characters/${id}/objects`, {
@@ -74,11 +84,6 @@ export const charactersApi = {
 		http
 			.delete<CharacterResponse>(`/characters/${id}/lines/${lineId}`)
 			.then((r) => r.character),
-
-	useLine: (id: number, lineId: number) =>
-		http.post<{ character: Character; effect: UseEffect }>(
-			`/characters/${id}/lines/${lineId}/use`,
-		),
 
 	equipLine: (id: number, lineId: number, equipped: boolean) =>
 		http
@@ -102,5 +107,10 @@ export const charactersApi = {
 	dropOne: (id: number, lineId: number) =>
 		http
 			.patch<CharacterResponse>(`/characters/${id}/lines/${lineId}/drop`)
+			.then((r) => r.character),
+
+	adjustGold: (id: number, delta: number) =>
+		http
+			.post<CharacterResponse>(`/characters/${id}/gold`, { delta })
 			.then((r) => r.character),
 };

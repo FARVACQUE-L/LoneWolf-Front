@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { charactersApi } from "../api/characters";
 import { ApiError } from "../api/http";
 import { objectsApi } from "../api/objects";
+import { randomTableApi } from "../api/randomTable";
 import FightPanel from "../components/FightPanel";
 import type {
 	CatalogObject,
@@ -148,6 +149,8 @@ export default function CharacterSheetPage() {
 	const [loading, setLoading] = useState(true);
 	const [busy, setBusy] = useState(false);
 	const [modalOpen, setModalOpen] = useState(false);
+	const [goldAmount, setGoldAmount] = useState(1);
+	const [randomDraw, setRandomDraw] = useState<number | null>(null);
 
 	const load = useCallback(async () => {
 		if (!id) return;
@@ -205,9 +208,66 @@ export default function CharacterSheetPage() {
 		}
 	}
 
+	async function runEndurance(action: () => Promise<Character>, label: string) {
+		setBusy(true);
+		setError(null);
+		setNotice(null);
+		const before = character?.endurance ?? 0;
+		try {
+			const updated = await action();
+			setCharacter(updated);
+			const delta = updated.endurance - before;
+			const sign = delta > 0 ? `+${delta}` : `−${Math.abs(delta)}`;
+			setNotice(
+				updated.status === "DEAD"
+					? `${label} : Endurance à 0, le Seigneur Kaï succombe.`
+					: `${label} : ${sign} Endurance.`,
+			);
+		} catch (err) {
+			setError(err instanceof ApiError ? err.message : "Action impossible.");
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function handleGold(delta: number) {
+		setBusy(true);
+		setError(null);
+		setNotice(null);
+		const before = character?.gold ?? 0;
+		try {
+			const updated = await charactersApi.adjustGold(characterId, delta);
+			setCharacter(updated);
+			const applied = updated.gold - before;
+			const sign = applied >= 0 ? `+${applied}` : `−${Math.abs(applied)}`;
+			setNotice(`${sign} PO — Bourse : ${updated.gold}.`);
+		} catch (err) {
+			if (err instanceof ApiError && err.code === "INSUFFICIENT_GOLD") {
+				setError("Fonds insuffisants dans la Bourse.");
+			} else {
+				setError(err instanceof ApiError ? err.message : "Action impossible.");
+			}
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function handleRandomTable() {
+		setBusy(true);
+		setError(null);
+		try {
+			setRandomDraw(await randomTableApi.draw());
+		} catch (err) {
+			setError(err instanceof ApiError ? err.message : "Tirage impossible.");
+		} finally {
+			setBusy(false);
+		}
+	}
+
 	if (loading) return <p className="muted center">Chargement…</p>;
-	if (error) return <p className="error center">{error}</p>;
-	if (!character) return null;
+	if (!character) {
+		return error ? <p className="error center">{error}</p> : null;
+	}
 
 	const { weapons, backpack, special, meals } = groupInventory(
 		character.inventory,
@@ -280,6 +340,37 @@ export default function CharacterSheetPage() {
 				<div className="stat-box">
 					<span className="stat-label">Bourse (max {MAX_GOLD})</span>
 					<span className="stat-value">{character.gold}</span>
+					<div className="gold-controls">
+						<input
+							type="number"
+							min={1}
+							max={MAX_GOLD}
+							value={goldAmount}
+							disabled={busy || !alive}
+							onChange={(e) =>
+								setGoldAmount(
+									Math.max(1, Math.min(MAX_GOLD, Number(e.target.value) || 1)),
+								)
+							}
+							aria-label="Montant en PO"
+						/>
+						<button
+							type="button"
+							className="btn"
+							disabled={busy || !alive || character.gold >= MAX_GOLD}
+							onClick={() => handleGold(goldAmount)}
+						>
+							+
+						</button>
+						<button
+							type="button"
+							className="btn danger"
+							disabled={busy || !alive || character.gold === 0}
+							onClick={() => handleGold(-goldAmount)}
+						>
+							−
+						</button>
+					</div>
 				</div>
 				<div className="stat-box">
 					<span className="stat-label">Repas</span>
@@ -503,8 +594,58 @@ export default function CharacterSheetPage() {
 			</section>
 
 			<section className="sheet-section">
+				<h2 className="section-title">Endurance</h2>
+				<div className="endurance-actions">
+					<button
+						type="button"
+						className="btn"
+						disabled={
+							busy || !alive || character.endurance >= character.enduranceMax
+						}
+						onClick={() =>
+							runEndurance(() => charactersApi.heal(characterId), "Guérison")
+						}
+					>
+						Guérison +1
+					</button>
+					<button
+						type="button"
+						className="btn danger"
+						disabled={busy || !alive}
+						onClick={() =>
+							runEndurance(
+								() => charactersApi.meal(characterId),
+								"Repas manqué",
+							)
+						}
+					>
+						Repas manqué −3
+					</button>
+				</div>
+			</section>
+
+			<section className="sheet-section">
 				<h2 className="section-title">Fight</h2>
 				<FightPanel character={character} onUpdated={load} />
+			</section>
+
+			<section className="sheet-section random-table">
+				<h2 className="section-title">Table de hasard</h2>
+				<div className="random-controls">
+					<button
+						type="button"
+						className="btn"
+						disabled={busy}
+						onClick={handleRandomTable}
+					>
+						Tirer
+					</button>
+					{randomDraw !== null && (
+						<span className="random-result" aria-live="polite">
+							{randomDraw}
+						</span>
+					)}
+				</div>
 			</section>
 
 			{modalOpen && (
