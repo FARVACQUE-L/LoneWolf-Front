@@ -73,4 +73,12 @@ export interface RoundResponse {
 	enemy: { name: string; endurance: number };
 	character: { endurance: number; status: string; choiceRequired: boolean };
 	fightStatus: FightOutcome;
+	healingOptions?: HealingOption[];
+}
+
+export interface HealingOption {
+	lineId: number;
+	name: string;
+	quantity: number;
+	restore: number;
 }

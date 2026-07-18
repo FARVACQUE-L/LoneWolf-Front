@@ -2,7 +2,12 @@ import { useState } from "react";
 import { charactersApi } from "../api/characters";
 import { fightsApi } from "../api/fights";
 import { ApiError } from "../api/http";
-import type { Character, FightOutcome, RoundLog } from "../types/types";
+import type {
+	Character,
+	FightOutcome,
+	HealingOption,
+	RoundLog,
+} from "../types/types";
 
 interface Props {
 	character: Character;
@@ -25,6 +30,7 @@ export default function FightPanel({ character, onUpdated }: Props) {
 	const [mindblastEnabled, setMindblastEnabled] = useState(true);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+	const [healingOptions, setHealingOptions] = useState<HealingOption[]>([]);
 
 	function resetFight() {
 		setFightId(null);
@@ -33,6 +39,7 @@ export default function FightPanel({ character, onUpdated }: Props) {
 		setOutcome(null);
 		setDisciplineBonus(0);
 		setMindblastEnabled(true);
+		setHealingOptions([]);
 	}
 
 	async function run(action: () => Promise<unknown>, afterReset = false) {
@@ -83,9 +90,30 @@ export default function FightPanel({ character, onUpdated }: Props) {
 			setEnemy({ name: res.enemy.name, endurance: res.enemy.endurance });
 			setRounds((prev) => [...prev, res.round]);
 			setOutcome(res.fightStatus);
+			setHealingOptions(res.healingOptions ?? []);
 			onUpdated();
 		} catch (err) {
 			setError(err instanceof ApiError ? err.message : "Round impossible.");
+		} finally {
+			setBusy(false);
+		}
+	}
+
+	async function handleDrink(lineId: number) {
+		setBusy(true);
+		setError(null);
+		try {
+			await charactersApi.consumeLine(character.id, lineId);
+			setHealingOptions((prev) =>
+				prev
+					.map((o) =>
+						o.lineId === lineId ? { ...o, quantity: o.quantity - 1 } : o,
+					)
+					.filter((o) => o.quantity > 0),
+			);
+			onUpdated();
+		} catch (err) {
+			setError(err instanceof ApiError ? err.message : "Action impossible.");
 		} finally {
 			setBusy(false);
 		}
@@ -169,6 +197,37 @@ export default function FightPanel({ character, onUpdated }: Props) {
 					{enemy?.name ?? "L'adversaire"} est vaincu. Endurance restante :{" "}
 					{character.endurance}.
 				</p>
+
+				{error && <p className="error">{error}</p>}
+
+				{healingOptions.length > 0 && (
+					<div className="healing-options">
+						<h4>Soins disponibles</h4>
+						<ul className="inv-list">
+							{healingOptions.map((o) => (
+								<li key={o.lineId} className="inv-item">
+									<span className="inv-name">
+										{o.name}
+										{o.quantity > 1 && ` ×${o.quantity}`}
+									</span>
+									<span className="bonus">+{o.restore} End.</span>
+									<div className="inv-actions">
+										<button
+											type="button"
+											disabled={
+												busy || character.endurance >= character.enduranceMax
+											}
+											onClick={() => handleDrink(o.lineId)}
+										>
+											Boire
+										</button>
+									</div>
+								</li>
+							))}
+						</ul>
+					</div>
+				)}
+
 				<button type="button" onClick={resetFight}>
 					Nouveau combat
 				</button>

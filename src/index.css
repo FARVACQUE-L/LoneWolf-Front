@@ -649,6 +649,13 @@ button {
 	gap: 0.4rem;
 	align-items: center;
 }
+.healing-options {
+	margin: 0.75rem 0;
+}
+
+.healing-options h4 {
+	margin: 0 0 0.4rem;
+}
 
 @media (max-width: 520px) {
 	.stat-grid {
