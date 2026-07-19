@@ -32,6 +32,10 @@ export default function FightPanel({ character, onUpdated }: Props) {
 	const [error, setError] = useState<string | null>(null);
 	const [healingOptions, setHealingOptions] = useState<HealingOption[]>([]);
 
+	const hasMindblast = character.disciplines.some(
+		(d) => d.name === "Puissance psychique",
+	);
+
 	function resetFight() {
 		setFightId(null);
 		setEnemy(null);
@@ -250,7 +254,9 @@ export default function FightPanel({ character, onUpdated }: Props) {
 				</div>
 
 				<div className="fight-bonus">
-					<label htmlFor="discipline-bonus">Bonus discipline (Habileté)</label>
+					<label htmlFor="discipline-bonus">
+						Bonus de circonstance (Habileté)
+					</label>
 					<input
 						id="discipline-bonus"
 						type="number"
@@ -259,17 +265,19 @@ export default function FightPanel({ character, onUpdated }: Props) {
 						value={disciplineBonus}
 						onChange={(e) => setDisciplineBonus(Number(e.target.value) || 0)}
 					/>
-					<div className="fight-check">
-						<input
-							id="mindblast-enabled"
-							type="checkbox"
-							checked={mindblastEnabled}
-							onChange={(e) => setMindblastEnabled(e.target.checked)}
-						/>
-						<label htmlFor="mindblast-enabled">
-							Puissance psychique active
-						</label>
-					</div>
+					{hasMindblast && (
+						<div className="fight-check">
+							<input
+								id="mindblast-enabled"
+								type="checkbox"
+								checked={mindblastEnabled}
+								onChange={(e) => setMindblastEnabled(e.target.checked)}
+							/>
+							<label htmlFor="mindblast-enabled">
+								Puissance psychique (décoche si l'ennemi y est immunisé)
+							</label>
+						</div>
+					)}
 				</div>
 
 				{error && <p className="error">{error}</p>}
